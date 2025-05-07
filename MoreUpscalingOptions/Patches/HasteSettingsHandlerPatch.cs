@@ -57,7 +57,7 @@ internal class HasteSettingsHandlerPatch
 		}
 
 		var oldSettingIndex = settings.FindIndex(s => s is TOldType);
-		if (oldSettingIndex <= 0)
+		if (oldSettingIndex < 0)
 		{
 			return;
 		}
