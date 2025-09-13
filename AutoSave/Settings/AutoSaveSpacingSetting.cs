@@ -36,7 +36,7 @@ public class AutoSaveSpacingSetting : IntSetting, IExposedSetting
 	/// <summary>
 	/// Default value.
 	/// </summary>
-	/// <returns></returns>
+	/// <returns> Returns default value. </returns>
 	protected override int GetDefaultValue() => DefaultValue;
 
 	/// <summary>
