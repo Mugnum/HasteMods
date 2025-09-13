@@ -22,7 +22,7 @@ public class MaxFovSetting : FloatSetting, IExposedSetting
 	/// Returns default value.
 	/// </summary>
 	/// <returns> Default value. </returns>
-	protected override float GetDefaultValue() => 140;
+	protected override float GetDefaultValue() => 120;
 
 	/// <summary>
 	/// Returns setting boundaries.
