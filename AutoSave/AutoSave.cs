@@ -13,7 +13,7 @@ public class AutoSave
 	/// <summary>
 	/// Counter for skipped saves.
 	/// </summary>
-	public static int SkippedSavesCount;
+	private static int SkippedSavesCount;
 
 	/// <summary>
 	/// List of ignored scenes.
@@ -39,6 +39,7 @@ public class AutoSave
 	/// </summary>
 	static AutoSave()
 	{
+		SceneManager.sceneLoaded -= SaveGameOnSceneLoad;
 		SceneManager.sceneLoaded += SaveGameOnSceneLoad;
 	}
 
@@ -53,18 +54,19 @@ public class AutoSave
 	/// <summary>
 	/// On scene loaded event handler.
 	/// </summary>
-	/// <param name="arg0"> Scene. </param>
-	/// <param name="arg1"> Load scene mode. </param>
-	private static void SaveGameOnSceneLoad(Scene arg0, LoadSceneMode arg1)
+	/// <param name="scene"> Scene. </param>
+	/// <param name="loadMode"> Load scene mode. </param>
+	private static void SaveGameOnSceneLoad(Scene scene, LoadSceneMode loadMode)
 	{
-		if (!RunHandler.InRun || IgnoredScenes.Contains(arg0.name, StringComparer.OrdinalIgnoreCase))
+		if (!RunHandler.InRun || IgnoredScenes.Contains(scene.name, StringComparer.OrdinalIgnoreCase))
 		{
 			return;
 		}
 
+		const int SaveEveryLevel = 1;
 		var sceneSpacingSetting = GameHandler.Instance.SettingsHandler.GetSetting<AutoSaveSpacingSetting>().Value;
 
-		if (sceneSpacingSetting <= 1)
+		if (sceneSpacingSetting <= SaveEveryLevel)
 		{
 			SaveSystem.Save();
 			return;
