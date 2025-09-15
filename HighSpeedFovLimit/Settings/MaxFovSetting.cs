@@ -1,5 +1,4 @@
 ﻿using Landfall.Haste;
-using Mugnum.HasteMods.HighSpeedFovLimit.Patches;
 using Unity.Mathematics;
 using UnityEngine.Localization;
 using Zorro.Settings;
@@ -17,7 +16,6 @@ public class MaxFovSetting : FloatSetting, IExposedSetting
 	/// </summary>
 	public override void ApplyValue()
 	{
-		CameraMovementPatch.MaxFov = Value;
 	}
 
 	/// <summary>
