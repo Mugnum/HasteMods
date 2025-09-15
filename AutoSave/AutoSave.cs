@@ -21,6 +21,7 @@ public class AutoSave
 	private static readonly string[] IgnoredScenes =
 	{
 		"DialogueScene",
+		"EndScene",
 		"MainMenu",
 		"ShopScene",
 		"RestScene_Current",
