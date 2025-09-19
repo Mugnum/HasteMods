@@ -1,4 +1,5 @@
 ﻿using Landfall.Haste;
+using Mugnum.HasteMods.HighSpeedFovLimit.Patches;
 using Unity.Mathematics;
 using UnityEngine.Localization;
 using Zorro.Settings;
@@ -12,17 +13,33 @@ namespace Mugnum.HasteMods.HighSpeedFovLimit.Settings;
 public class MaxFovSetting : FloatSetting, IExposedSetting
 {
 	/// <summary>
+	/// Default value.
+	/// </summary>
+	public static int DefaultValue = 120;
+
+	/// <summary>
 	/// Process value change.
 	/// </summary>
 	public override void ApplyValue()
 	{
+		CameraMovementPatch.MaxFov = Value;
+	}
+
+	/// <summary>
+	/// Loads setting.
+	/// </summary>
+	/// <param name="loader"> Settings loader. </param>
+	public override void Load(ISettingsSaveLoad loader)
+	{
+		base.Load(loader);
+		CameraMovementPatch.MaxFov = Value;
 	}
 
 	/// <summary>
 	/// Returns default value.
 	/// </summary>
 	/// <returns> Default value. </returns>
-	protected override float GetDefaultValue() => 120;
+	protected override float GetDefaultValue() => DefaultValue;
 
 	/// <summary>
 	/// Returns setting boundaries.

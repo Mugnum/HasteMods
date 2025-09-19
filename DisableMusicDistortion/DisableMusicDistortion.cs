@@ -12,7 +12,7 @@ public class DisableMusicDistortion
     /// <summary>
     /// Harmony plugin guid.
     /// </summary>
-    private const string PluginGuid = "Mugnum.DisableMusicDistortion";
+    private const string PluginGuid = $"Mugnum.{nameof(DisableMusicDistortion)}";
 
     /// <summary>
     /// Constructor.

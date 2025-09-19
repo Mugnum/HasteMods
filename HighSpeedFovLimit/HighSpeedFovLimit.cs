@@ -12,7 +12,7 @@ public class HighSpeedFovLimit
 	/// <summary>
 	/// Harmony plugin guid.
 	/// </summary>
-	private const string PluginGuid = "Mugnum.HighSpeedFovLimit";
+	private const string PluginGuid = $"Mugnum.{nameof(HighSpeedFovLimit)}";
 
 	/// <summary>
 	/// Constructor.

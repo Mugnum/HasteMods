@@ -12,7 +12,7 @@ public class NoRainbowShoes
 	/// <summary>
 	/// Harmony plugin guid.
 	/// </summary>
-	private const string PluginGuid = "Mugnum.NoRainbowShoes";
+	private const string PluginGuid = $"Mugnum.{nameof(NoRainbowShoes)}";
 
 	/// <summary>
 	/// Constructor.

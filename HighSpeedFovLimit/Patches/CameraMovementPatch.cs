@@ -8,8 +8,21 @@ namespace Mugnum.HasteMods.HighSpeedFovLimit.Patches;
 /// Patch for "CameraMovement" class.
 /// </summary>
 [HarmonyPatch(typeof(CameraMovement))]
-internal class CameraMovementPatch
+internal static class CameraMovementPatch
 {
+	/// <summary>
+	/// Max fov value.
+	/// </summary>
+	public static float MaxFov;
+
+	/// <summary>
+	/// Constructor.
+	/// </summary>
+	static CameraMovementPatch()
+	{
+		MaxFov = MaxFovSetting.DefaultValue;
+	}
+
 	/// <summary>
 	/// Postfix for "Update" method.
 	/// </summary>
@@ -18,7 +31,9 @@ internal class CameraMovementPatch
 	[HarmonyPostfix]
 	internal static void UpdatePostfix(MainCamera ___cam)
 	{
-		var maxFov = GameHandler.Instance.SettingsHandler.GetSetting<MaxFovSetting>().Value;
-		___cam.cam.fieldOfView = Math.Min(___cam.cam.fieldOfView, maxFov);
+		if (MaxFov > 0)
+		{
+			___cam.cam.fieldOfView = Math.Min(___cam.cam.fieldOfView, MaxFov);
+		}
 	}
 }
