@@ -13,15 +13,7 @@ internal static class CameraMovementPatch
 	/// <summary>
 	/// Max fov value.
 	/// </summary>
-	public static float MaxFov;
-
-	/// <summary>
-	/// Constructor.
-	/// </summary>
-	static CameraMovementPatch()
-	{
-		MaxFov = MaxFovSetting.DefaultValue;
-	}
+	public static float MaxFov = MaxFovSetting.DefaultValue;
 
 	/// <summary>
 	/// Postfix for "Update" method.
