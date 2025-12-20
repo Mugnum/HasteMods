@@ -18,7 +18,7 @@ public class AutoSave
 	/// <summary>
 	/// List of ignored scenes.
 	/// </summary>
-	private static readonly string[] IgnoredScenes =
+	private static readonly HashSet<string> IgnoredScenes = new(StringComparer.OrdinalIgnoreCase)
 	{
 		"DialogueScene",
 		"EndScene",
@@ -59,7 +59,7 @@ public class AutoSave
 	/// <param name="loadMode"> Load scene mode. </param>
 	private static void SaveGameOnSceneLoad(Scene scene, LoadSceneMode loadMode)
 	{
-		if (!RunHandler.InRun || IgnoredScenes.Contains(scene.name, StringComparer.OrdinalIgnoreCase))
+		if (!RunHandler.InRun || IgnoredScenes.Contains(scene.name))
 		{
 			return;
 		}

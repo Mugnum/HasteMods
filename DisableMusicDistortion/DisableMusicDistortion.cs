@@ -1,4 +1,3 @@
-using HarmonyLib;
 using Landfall.Modding;
 
 namespace Mugnum.HasteMods.DisableMusicDistortion;
@@ -9,16 +8,16 @@ namespace Mugnum.HasteMods.DisableMusicDistortion;
 [LandfallPlugin]
 public class DisableMusicDistortion
 {
-    /// <summary>
-    /// Harmony plugin guid.
-    /// </summary>
-    private const string PluginGuid = $"Mugnum.{nameof(DisableMusicDistortion)}";
+	/// <summary>
+	/// Constructor.
+	/// </summary>
+	static DisableMusicDistortion()
+	{
+		const bool IsLevelDeath = false;
 
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    static DisableMusicDistortion()
-    {
-        new Harmony(PluginGuid).PatchAll();
-    }
+		On.Landfall.Haste.Music.MusicPlayer.SetLevelDeath += (original, self, _) =>
+		{
+			original(self, IsLevelDeath);
+		};
+	}
 }

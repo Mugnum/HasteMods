@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+﻿using Mugnum.HasteMods.MoreUpscalingOptions.Common;
 using Mugnum.HasteMods.MoreUpscalingOptions.Settings;
 using UnityEngine;
 using Zorro.Settings;
@@ -9,22 +9,35 @@ namespace Mugnum.HasteMods.MoreUpscalingOptions.Patches;
 /// <summary>
 /// Patch for <see cref="HasteSettingsHandler"/> class.
 /// </summary>
-[HarmonyPatch(typeof(HasteSettingsHandler))]
-internal class HasteSettingsHandlerPatch
+internal static class HasteSettingsHandlerPatch
 {
 	/// <summary>
-	/// Postfix for <see cref="HasteSettingsHandler"/> constructor.
+	/// "settings" private field getter from <see cref="HasteSettingsHandler"/> class.
 	/// </summary>
-	/// <param name="___settings"> "settings" private field. </param>
-	/// <param name="____settingsSaveLoad"> "_settingsSaveLoad" private vield. </param>
-	[HarmonyPatch(typeof(HasteSettingsHandler), MethodType.Constructor)]
-	[HarmonyPostfix]
-	internal static void Postfix(List<Setting> ___settings, ISettingsSaveLoad ____settingsSaveLoad)
+	private static readonly Func<HasteSettingsHandler, List<Setting>> SettingsGetter
+		= AccessorHelper.CreateFieldGetter<HasteSettingsHandler, List<Setting>>("settings");
+
+	/// <summary>
+	/// "settingsSaveLoad" private field getter from <see cref="HasteSettingsHandler"/> class.
+	/// </summary>
+	private static readonly Func<HasteSettingsHandler, ISettingsSaveLoad> SettingsSaveLoadGetter
+		= AccessorHelper.CreateFieldGetter<HasteSettingsHandler, ISettingsSaveLoad>("settingsSaveLoad");
+
+	/// <summary>
+	/// Handler for <see cref="HasteSettingsHandler"/>> contructor patch.
+	/// </summary>
+	/// <param name="orig"> Original method. </param>
+	/// <param name="self"> Instance. </param>
+	internal static void OnConstructor(On.HasteSettingsHandler.orig_ctor orig, HasteSettingsHandler self)
 	{
-		var upscalingModeExists = ___settings.Any(s => s is UpscalingSetting);
+		var settings = SettingsGetter(self);
+		var settingsSaveLoad = SettingsSaveLoadGetter(self);
+
+		orig(self);
+		var upscalingModeExists = settings.Any(s => s is UpscalingSetting);
 
 		if (!upscalingModeExists
-			|| ___settings.FirstOrDefault(s => s is UpscalingQualitySetting) is not UpscalingQualitySetting upscalingQualityOldSetting)
+			|| settings.FirstOrDefault(s => s is UpscalingQualitySetting) is not UpscalingQualitySetting upscalingQualityOldSetting)
 		{
 			Debug.LogError($"{nameof(HasteSettingsHandlerPatch)} constructor. Cannot find settings: " +
 				$"{nameof(UpscalingSetting)}, {nameof(UpscalingQualitySetting)}.");
@@ -33,11 +46,11 @@ internal class HasteSettingsHandlerPatch
 
 		// Replacing existing "Upscaling Quality" setting with extended variant.
 		// Old setting is kept in memory to satisfy UpscalingSetting's constructor.
-		ReplaceSetting<UpscalingQualitySetting>(___settings, ____settingsSaveLoad, new ExtendedUpscalingQualitySetting());
+		ReplaceSetting<UpscalingQualitySetting>(settings, settingsSaveLoad, new ExtendedUpscalingQualitySetting());
 
 		// Jank: re-initializing UpscalingSetting after original HasteSettingsHandler constructor
 		// to later access newly created ExtendedUpscalingQualitySetting.
-		ReplaceSetting<UpscalingSetting>(___settings, ____settingsSaveLoad, new UpscalingSetting(upscalingQualityOldSetting), true);
+		ReplaceSetting<UpscalingSetting>(settings, settingsSaveLoad, new UpscalingSetting(upscalingQualityOldSetting), true);
 	}
 
 	/// <summary>
@@ -48,7 +61,8 @@ internal class HasteSettingsHandlerPatch
 	/// <param name="saveLoad"> Save/load manager. </param>
 	/// <param name="newSetting"> New setting. </param>
 	/// <param name="isDisposing"> Is need to dispose old setting. </param>
-	private static void ReplaceSetting<TOldType>(List<Setting>? settings, ISettingsSaveLoad saveLoad, Setting? newSetting, bool isDisposing = false)
+	private static void ReplaceSetting<TOldType>(List<Setting>? settings, ISettingsSaveLoad saveLoad, 
+		Setting? newSetting, bool isDisposing = false)
 		where TOldType : Setting
 	{
 		if (settings == null || newSetting == null)

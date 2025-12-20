@@ -1,5 +1,4 @@
-﻿using HarmonyLib;
-using Mugnum.HasteMods.MoreUpscalingOptions.Settings;
+﻿using Mugnum.HasteMods.MoreUpscalingOptions.Settings;
 using SCPE;
 using TND.DLSS;
 using TND.FSR;
@@ -12,8 +11,7 @@ namespace Mugnum.HasteMods.MoreUpscalingOptions.Patches;
 /// <summary>
 /// Patch for "UpscalingSetting" class.
 /// </summary>
-[HarmonyPatch(typeof(UpscalingSetting))]
-internal class UpscalingSettingPatch
+internal static class UpscalingSettingPatch
 {
 	/// <summary>
 	/// Extended upscaling quality setting.
@@ -32,19 +30,19 @@ internal class UpscalingSettingPatch
 	}
 
 	/// <summary>
-	/// Patch for "GetDLSSQualityMode" method.
+	/// Handler for <see cref="UpscalingSetting.GetDLSSQualityMode"/> method.
 	/// </summary>
-	/// <param name="__result"> Result value. </param>
-	[HarmonyPatch("GetDLSSQualityMode")]
-	[HarmonyPostfix]
-	internal static void GetDLSSQualityModePostfix(ref DLSS_Quality __result)
+	/// <param name="orig"> Original method. </param>
+	/// <param name="self"> Instance. </param>
+	/// <returns> DLSS quality. </returns>
+	internal static DLSS_Quality OnGetDLSSQualityMode(On.UpscalingSetting.orig_GetDLSSQualityMode orig, UpscalingSetting self)
 	{
 		if (ExtendedUpscalingQualitySetting == null)
 		{
-			return;
+			return orig(self);
 		}
 
-		__result = ExtendedUpscalingQualitySetting.Value switch
+		return ExtendedUpscalingQualitySetting.Value switch
 		{
 			UpscalingQuality.UltraPerformance => DLSS_Quality.UltraPerformance,
 			UpscalingQuality.Performance => DLSS_Quality.Performance,
@@ -57,19 +55,19 @@ internal class UpscalingSettingPatch
 	}
 
 	/// <summary>
-	/// Patch for "GetFSRQualityMode" method.
+	/// Handler for <see cref="UpscalingSetting.GetFSRQualityMode"/> method.
 	/// </summary>
-	/// <param name="__result"> Result value. </param>
-	[HarmonyPatch("GetFSRQualityMode")]
-	[HarmonyPostfix]
-	internal static void GetFSRQualityModePostfix(ref FSR3_Quality __result)
+	/// <param name="orig"> Original method. </param>
+	/// <param name="self"> Instance. </param>
+	/// <returns> FSR3 quality. </returns>
+	internal static FSR3_Quality OnGetFSRQualityMode(On.UpscalingSetting.orig_GetFSRQualityMode orig, UpscalingSetting self)
 	{
 		if (ExtendedUpscalingQualitySetting == null)
 		{
-			return;
+			return orig(self);
 		}
 
-		__result = ExtendedUpscalingQualitySetting.Value switch
+		return ExtendedUpscalingQualitySetting.Value switch
 		{
 			UpscalingQuality.UltraPerformance => FSR3_Quality.UltraPerformance,
 			UpscalingQuality.Performance => FSR3_Quality.Performance,
@@ -82,19 +80,19 @@ internal class UpscalingSettingPatch
 	}
 
 	/// <summary>
-	/// Patch for "GetXeSSQualityMode" method.
+	/// Handler for <see cref="UpscalingSetting.GetXeSSQualityMode"/> method.
 	/// </summary>
-	/// <param name="__result"> Result value. </param>
-	[HarmonyPatch("GetXeSSQualityMode")]
-	[HarmonyPostfix]
-	internal static void GetXeSSQualityModePostfix(ref XeSS_Quality __result)
+	/// <param name="orig"> Original method. </param>
+	/// <param name="self"> Instance. </param>
+	/// <returns> XeSS quality. </returns>
+	internal static XeSS_Quality OnGetXeSSQualityMode(On.UpscalingSetting.orig_GetXeSSQualityMode orig, UpscalingSetting self)
 	{
 		if (ExtendedUpscalingQualitySetting == null)
 		{
-			return;
+			return orig(self);
 		}
 
-		__result = ExtendedUpscalingQualitySetting.Value switch
+		return ExtendedUpscalingQualitySetting.Value switch
 		{
 			UpscalingQuality.UltraPerformance => XeSS_Quality.UltraPerformance,
 			UpscalingQuality.Performance => XeSS_Quality.Performance,
@@ -107,17 +105,16 @@ internal class UpscalingSettingPatch
 	}
 
 	/// <summary>
-	/// Patch for "ConfigureOutline" method.
+	/// Handler for <see cref="UpscalingSetting.ConfigureOutline"/> method.
 	/// </summary>
-	/// <param name="outline"> Edge detection outline. </param>
-	/// <param name="__instance"> <see href="UpscalingSetting"/> instance. </param>
-	[HarmonyPatch(nameof(UpscalingSetting.ConfigureOutline))]
-	[HarmonyPostfix]
-	internal static void ConfigureOutline(EdgeDetection outline, UpscalingSetting __instance)
+	/// <param name="orig"> Original method. </param>
+	/// <param name="self"> Instance. </param>
+	/// <param name="outline"> Outline. </param>
+	internal static void OnConfigureOutline(On.UpscalingSetting.orig_ConfigureOutline orig, UpscalingSetting self, EdgeDetection outline)
 	{
-		if (__instance.Value == UpscalingSetting.UpscalingMode.Off
-			|| ExtendedUpscalingQualitySetting == null
-			|| outline.edgeOpacity == null)
+		if (self.Value == UpscalingSetting.UpscalingMode.Off
+		    || ExtendedUpscalingQualitySetting == null
+		    || outline.edgeOpacity == null)
 		{
 			return;
 		}

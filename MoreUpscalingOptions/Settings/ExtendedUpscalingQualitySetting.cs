@@ -3,7 +3,6 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Tables;
 using Zorro.Settings;
 
-// ReSharper disable InconsistentNaming
 namespace Mugnum.HasteMods.MoreUpscalingOptions.Settings;
 
 /// <summary>
@@ -43,13 +42,13 @@ public class ExtendedUpscalingQualitySetting : EnumSetting<UpscalingQuality>, IE
 	/// Returns available choices for dropdown menu.
 	/// </summary>
 	/// <returns> Localized choices. </returns>
-	public override List<LocalizedString> GetLocalizedChoices() => new()
-	{
+	public override List<LocalizedString> GetLocalizedChoices() =>
+	[
 		new UnlocalizedString("Native / DLAA"),
 		new UnlocalizedString("Ultra Quality"),
 		new UnlocalizedString("Quality"),
 		new UnlocalizedString("Balanced"),
 		new UnlocalizedString("Performance"),
 		new UnlocalizedString("Ultra Performance")
-	};
+	];
 }

@@ -1,24 +1,21 @@
-﻿using HarmonyLib;
-using Landfall.Haste;
+﻿using Landfall.Haste;
 using UnityEngine.Localization;
 
-// ReSharper disable InconsistentNaming
 namespace Mugnum.HasteMods.MoreUpscalingOptions.Patches;
 
 /// <summary>
 /// Patch for <see cref="UpscalingQualitySetting"/> class.
 /// </summary>
-[HarmonyPatch(typeof(UpscalingQualitySetting))]
-internal class UpscalingQualitySettingPatch
+internal static class UpscalingQualitySettingPatch
 {
 	/// <summary>
-	/// Patch for "GetDisplayName" method.
+	/// Handler for <see cref="UpscalingQualitySetting.GetDisplayName"/> method.
 	/// </summary>
-	/// <param name="__result"> Result value. </param>
-	[HarmonyPatch(nameof(UpscalingQualitySetting.GetDisplayName))]
-	[HarmonyPostfix]
-	internal static void GetDisplayNamePostfix(ref LocalizedString __result)
+	/// <param name="orig"> Original method. </param>
+	/// <param name="self"> Instance. </param>
+	/// <returns> Display value. </returns>
+	internal static LocalizedString OnGetDisplayName(On.UpscalingQualitySetting.orig_GetDisplayName orig, UpscalingQualitySetting self)
 	{
-		__result = new UnlocalizedString("Upscaling Quality (Disabled)");
+		return new UnlocalizedString("Upscaling Quality (Disabled)");
 	}
 }

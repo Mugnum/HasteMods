@@ -24,7 +24,7 @@
 		<HarmonyWorkshopId>3408901301</HarmonyWorkshopId>
 		<SettingsLibWorkshopId>3462196533</SettingsLibWorkshopId>
 
-		<EnableHarmony Condition="'$(EnableHarmony)'==''">true</EnableHarmony>
+		<EnableHarmony Condition="'$(EnableHarmony)'==''">false</EnableHarmony>
 		<EnableSettingsLib Condition="'$(EnableSettingsLib)'==''">false</EnableSettingsLib>
   </PropertyGroup>
 
