@@ -1,6 +1,5 @@
 using Landfall.Modding;
 using System.Linq.Expressions;
-using System.Reflection;
 using UnityEngine;
 
 namespace Mugnum.HasteMods.NoRainbowShoes;
@@ -62,11 +61,8 @@ public class NoRainbowShoes
 	/// <returns> Field getter delegate. </returns>
 	internal static Func<TInstanceType, TFieldType> CreateFieldGetter<TInstanceType, TFieldType>(string fieldName)
 	{
-		var fieldInfo = typeof(TInstanceType).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic)
-			?? throw new MissingFieldException(typeof(TInstanceType).FullName, fieldName);
-
 		var instance = Expression.Parameter(typeof(TInstanceType), "instance");
-		var field = Expression.Field(instance, fieldInfo);
+		var field = Expression.Field(instance, fieldName);
 		return Expression.Lambda<Func<TInstanceType, TFieldType>>(field, instance).Compile();
 	}
 }
