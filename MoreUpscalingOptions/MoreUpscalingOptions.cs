@@ -18,7 +18,6 @@ public class MoreUpscalingOptions
 		On.UpscalingSetting.GetFSRQualityMode += UpscalingSettingPatch.OnGetFSRQualityMode;
 		On.UpscalingSetting.GetXeSSQualityMode += UpscalingSettingPatch.OnGetXeSSQualityMode;
 		On.UpscalingSetting.ConfigureOutline += UpscalingSettingPatch.OnConfigureOutline;
-		On.UpscalingQualitySetting.GetDisplayName += UpscalingQualitySettingPatch.OnGetDisplayName;
-		On.HasteSettingsHandler.ctor += HasteSettingsHandlerPatch.OnConstructor;
+		On.HasteSettingsHandler.AddSetting += HasteSettingsHandlerPatch.OnAddSetting;
 	}
 }
