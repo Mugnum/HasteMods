@@ -8,7 +8,6 @@ namespace Mugnum.HasteMods.FramerateLimiter.Settings;
 /// <summary>
 /// Background FPS limit setting.
 /// </summary>
-[HasteSetting]
 public class BackgroundFpsLimitSetting : FloatSetting, IExposedSetting
 {
 	/// <summary>
@@ -49,7 +48,7 @@ public class BackgroundFpsLimitSetting : FloatSetting, IExposedSetting
 	/// Returns display name.
 	/// </summary>
 	/// <returns> Display name. </returns>
-	public virtual LocalizedString GetDisplayName() => new UnlocalizedString("Background FPS limit");
+	public virtual LocalizedString GetDisplayName() => new UnlocalizedString("FPS limit: Background");
 
 	/// <summary>
 	/// Returns category.

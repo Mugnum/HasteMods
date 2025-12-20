@@ -9,7 +9,6 @@ namespace Mugnum.HasteMods.FramerateLimiter.Settings;
 /// <summary>
 /// FPS limit setting.
 /// </summary>
-[HasteSetting]
 public class FpsLimitSetting : FloatSetting, IExposedSetting
 {
 	/// <summary>

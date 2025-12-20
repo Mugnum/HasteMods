@@ -15,8 +15,29 @@ public class FramerateLimiter
 	/// </summary>
 	static FramerateLimiter()
 	{
-		Application.focusChanged -= OnFocusChanged;
+		On.HasteSettingsHandler.ctor += OnHasteSettingsHandlerConstructor;
 		Application.focusChanged += OnFocusChanged;
+	}
+
+	/// <summary>
+	/// Handler for <see cref="HasteSettingsHandler"/> constructor.
+	/// </summary>
+	/// <param name="orig"> Original method. </param>
+	/// <param name="self"> Instance. </param>
+	private static void OnHasteSettingsHandlerConstructor(On.HasteSettingsHandler.orig_ctor orig, HasteSettingsHandler self)
+	{
+		orig(self);
+		RegisterSettings(self);
+	}
+
+	/// <summary>
+	/// Manually registers settings, while maintaining intended order in GUI.
+	/// </summary>
+	/// <param name="settingsHandler"> Settings handler. </param>
+	private static void RegisterSettings(HasteSettingsHandler settingsHandler)
+	{
+		settingsHandler.AddSetting(new FpsLimitSetting());
+		settingsHandler.AddSetting(new BackgroundFpsLimitSetting());
 	}
 
 	/// <summary>
