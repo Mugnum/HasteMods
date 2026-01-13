@@ -23,7 +23,7 @@ public class FramerateLimiter
 	static FramerateLimiter()
 	{
 		SettingsGetter = CreateFieldGetter<HasteSettingsHandler, List<Setting>>("settings");
-		On.VSyncSetting.ApplyValue += VSyncSetting_ApplyValue;
+		On.VSyncSetting.ApplyValue += OnVSyncSettingApplyValue;
 		On.HasteSettingsHandler.ctor += OnHasteSettingsHandlerConstructor;
 		Application.focusChanged += OnFocusChanged;
 	}
@@ -33,7 +33,7 @@ public class FramerateLimiter
 	/// </summary>
 	/// <param name="orig"> Original method. </param>
 	/// <param name="self"> Instance. </param>
-	private static void VSyncSetting_ApplyValue(On.VSyncSetting.orig_ApplyValue orig, VSyncSetting self)
+	private static void OnVSyncSettingApplyValue(On.VSyncSetting.orig_ApplyValue orig, VSyncSetting self)
 	{
 		// Force disables VSync, which prevents setting target FPS.
 		QualitySettings.vSyncCount = (int)VSyncSetting.VSyncMode.None;
