@@ -1,6 +1,8 @@
-﻿using Landfall.Modding;
+﻿using System.Linq.Expressions;
+using Landfall.Modding;
 using Mugnum.HasteMods.FramerateLimiter.Settings;
 using UnityEngine;
+using Zorro.Settings;
 
 namespace Mugnum.HasteMods.FramerateLimiter;
 
@@ -11,12 +13,30 @@ namespace Mugnum.HasteMods.FramerateLimiter;
 public class FramerateLimiter
 {
 	/// <summary>
+	/// "settings" private field getter for <see cref="HasteSettingsHandler"/>.
+	/// </summary>
+	private static readonly Func<HasteSettingsHandler, List<Setting>> SettingsGetter;
+
+	/// <summary>
 	/// Constructor.
 	/// </summary>
 	static FramerateLimiter()
 	{
+		SettingsGetter = CreateFieldGetter<HasteSettingsHandler, List<Setting>>("settings");
+		On.VSyncSetting.ApplyValue += VSyncSetting_ApplyValue;
 		On.HasteSettingsHandler.ctor += OnHasteSettingsHandlerConstructor;
 		Application.focusChanged += OnFocusChanged;
+	}
+
+	/// <summary>
+	/// Patch for applying value for VSync setting.
+	/// </summary>
+	/// <param name="orig"> Original method. </param>
+	/// <param name="self"> Instance. </param>
+	private static void VSyncSetting_ApplyValue(On.VSyncSetting.orig_ApplyValue orig, VSyncSetting self)
+	{
+		// Force disables VSync, which prevents setting target FPS.
+		QualitySettings.vSyncCount = (int)VSyncSetting.VSyncMode.None;
 	}
 
 	/// <summary>
@@ -38,6 +58,8 @@ public class FramerateLimiter
 	{
 		settingsHandler.AddSetting(new FpsLimitSetting());
 		settingsHandler.AddSetting(new BackgroundFpsLimitSetting());
+		var settings = SettingsGetter(settingsHandler);
+		settings.RemoveAll(s => s is VSyncSetting);
 	}
 
 	/// <summary>
@@ -80,9 +102,22 @@ public class FramerateLimiter
 		}
 
 		// If user has 76Hz+ display, assume they're on VRR.
-		// If user is 75Hz and below, set limiter above refresh rate to avoid judder with VSync enabled.
 		return refreshRate > ExpectedVrrThreshold
 			? refreshRate - VrrFramerateOffset
-			: refreshRate + VrrFramerateOffset;
+			: refreshRate;
+	}
+
+	/// <summary>
+	/// Creates private field getter from an instance.
+	/// </summary>
+	/// <typeparam name="TInstanceType"> Instance type. </typeparam>
+	/// <typeparam name="TFieldType"> Field type. </typeparam>
+	/// <param name="fieldName"> Field name. </param>
+	/// <returns> Field getter delegate. </returns>
+	internal static Func<TInstanceType, TFieldType> CreateFieldGetter<TInstanceType, TFieldType>(string fieldName)
+	{
+		var instance = Expression.Parameter(typeof(TInstanceType), "instance");
+		var field = Expression.Field(instance, fieldName);
+		return Expression.Lambda<Func<TInstanceType, TFieldType>>(field, instance).Compile();
 	}
 }
